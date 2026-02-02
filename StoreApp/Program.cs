@@ -18,6 +18,8 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Store API", Version = "v1" });
 });
 
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,6 +33,10 @@ app.UseSwaggerUI(d => d.DocumentTitle = "Store API");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:3000");
+});
 
 app.MapControllers();
 

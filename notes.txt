@@ -1,1 +1,6 @@
 Add-Migration InitialCreate
+
+
+
+// react
+npm run dev
