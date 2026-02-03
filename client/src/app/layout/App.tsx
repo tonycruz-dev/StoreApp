@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useState,} from "react";
+
 //import type { Product } from "../models/product";
 import {
   Box,
@@ -11,6 +11,7 @@ import {
 //import Catalog from "../../features/catalog/Catalog";
 import NavBar from "./NavBar";
 import { Outlet } from "react-router-dom";
+import { useAppSelector } from "../store/store";
 
 // const products = [
 //   { id: 1, name: 'Product 1', price: 10.0 },
@@ -20,7 +21,7 @@ import { Outlet } from "react-router-dom";
 
 function App() {
   //const [products, setProducts] = useState<Product[]>([]);
-  const [darkMode, setDarkMode] = useState(false);
+   const { darkMode } = useAppSelector((state) => state.ui);
   const palleteType = darkMode ? "dark" : "light";
 
     const theme = createTheme({
@@ -32,9 +33,9 @@ function App() {
       },
     });
 
- const toggleDarkMode = () => {
-   setDarkMode(!darkMode);
- };
+//  const toggleDarkMode = () => {
+//    setDarkMode(!darkMode);
+//  };
 
 
   // useEffect(() => {
@@ -52,7 +53,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <NavBar toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
+      <NavBar />
       <Box
         sx={{
           minHeight: "100vh",
