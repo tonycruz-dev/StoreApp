@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  useEffect,
-  useState,
-
-} from "react";
-import type { Product } from "../models/product";
+import {useState,} from "react";
+//import type { Product } from "../models/product";
 import {
   Box,
   Container,
@@ -12,8 +8,9 @@ import {
   CssBaseline,
   ThemeProvider,
 } from "@mui/material";
-import Catalog from "../../features/catalog/Catalog";
+//import Catalog from "../../features/catalog/Catalog";
 import NavBar from "./NavBar";
+import { Outlet } from "react-router-dom";
 
 // const products = [
 //   { id: 1, name: 'Product 1', price: 10.0 },
@@ -22,7 +19,7 @@ import NavBar from "./NavBar";
 // ];
 
 function App() {
-  const [products, setProducts] = useState<Product[]>([]);
+  //const [products, setProducts] = useState<Product[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const palleteType = darkMode ? "dark" : "light";
 
@@ -40,17 +37,17 @@ function App() {
  };
 
 
-  useEffect(() => {
-    fetch("https://localhost:5001/api/Products")
-      .then((response) => response.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.error("Error fetching products:", error));
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://localhost:5001/api/Products")
+  //     .then((response) => response.json())
+  //     .then((data) => setProducts(data))
+  //     .catch((error) => console.error("Error fetching products:", error));
+  // }, []);
 
 
-  if (products.length === 0) {
-    return <h1>Loading products...</h1>;
-  }
+  // if (products.length === 0) {
+  //   return <h1>Loading products...</h1>;
+  // }
 
   return (
     <ThemeProvider theme={theme}>
@@ -66,7 +63,7 @@ function App() {
         }}
       >
         <Container maxWidth="xl" sx={{ mt: 8 }}>
-          <Catalog products={products} />
+          <Outlet />
         </Container>
       </Box>
     </ThemeProvider>
