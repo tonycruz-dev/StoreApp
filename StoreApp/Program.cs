@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using StoreApp.Data;
+using StoreApp.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +20,10 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddCors();
+builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();
-
+app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
