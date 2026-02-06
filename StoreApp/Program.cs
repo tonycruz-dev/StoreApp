@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using StoreApp.Data;
+using StoreApp.Entities;
 using StoreApp.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,12 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors();
 builder.Services.AddTransient<ExceptionMiddleware>();
+builder.Services.AddIdentityApiEndpoints<User>(opt =>
+{
+	opt.User.RequireUniqueEmail = true;
+})
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<StoreContext>();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
@@ -34,6 +42,7 @@ app.UseSwaggerUI(d => d.DocumentTitle = "Store API");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors(opt =>
 {
@@ -41,6 +50,7 @@ app.UseCors(opt =>
 });
 
 app.MapControllers();
+app.MapGroup("api").MapIdentityApi<User>();
 
 DbInitializer.InitDb(app);
 

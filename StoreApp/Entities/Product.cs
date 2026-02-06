@@ -1,4 +1,6 @@
-﻿namespace StoreApp.Entities;
+﻿using System.Net;
+
+namespace StoreApp.Entities;
 
 public class Product
 {
