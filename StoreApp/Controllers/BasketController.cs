@@ -54,7 +54,22 @@ public class BasketController(StoreContext context) : BaseApiController
 
 		return BadRequest("Problem updating basket");
 	}
-
+	// clear all the basket
+	[HttpDelete("clear")]
+	public async Task<ActionResult> ClearBasket()
+	{
+		var listAllItemsInBasket = await context.Baskets
+			.Include(x => x.Items)
+			.ToListAsync();
+		// remove all items in the basket
+		foreach (var basket in listAllItemsInBasket)
+		{
+			context.Baskets.Remove(basket);
+		}
+		var result = await context.SaveChangesAsync() > 0;
+		if (result) return Ok();
+		return BadRequest("Problem clearing basket");
+	}
 	private Basket CreateBasket()
 	{
 		var basketId = Guid.NewGuid().ToString();

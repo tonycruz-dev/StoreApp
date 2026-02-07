@@ -1,4 +1,5 @@
-﻿using StoreApp.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using StoreApp.DTOs;
 using StoreApp.Entities;
 
 namespace StoreApp.Extensions;
@@ -10,7 +11,9 @@ public static class BasketExtensions
 		return new BasketDto
 		{
 			BasketId = basket.BasketId,
-			Items = [.. basket.Items.Select(x => new BasketItemDto
+			ClientSecret = basket.ClientSecret,
+			PaymentIntentId = basket.PaymentIntentId,
+			Items = basket.Items.Select(x => new BasketItemDto
 			{
 				ProductId = x.ProductId,
 				Name = x.Product.Name,
@@ -19,7 +22,17 @@ public static class BasketExtensions
 				Type = x.Product.Type,
 				PictureUrl = x.Product.PictureUrl,
 				Quantity = x.Quantity
-			})]
-        };
+			}).ToList()
+		};
+	}
+
+	public static async Task<Basket> GetBasketWithItems(this IQueryable<Basket> query,
+		string? basketId)
+	{
+		return await query
+			.Include(x => x.Items)
+			.ThenInclude(x => x.Product)
+			.FirstOrDefaultAsync(x => x.BasketId == basketId)
+				?? throw new Exception("Cannot get basket");
 	}
 }
