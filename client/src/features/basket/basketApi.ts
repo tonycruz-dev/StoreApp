@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../app/api/baseApi";
 import { type Basket, Item } from "../../app/models/basket";
 import type { Product } from "../../app/models/product";
+import Cookies from "js-cookie";
 
 function isBasketItem(product: Product | Item): product is Item {
   return (product as Item).quantity !== undefined;
@@ -16,7 +17,10 @@ export const basketApi = createApi({
       query: () => "basket",
       providesTags: ["Basket"],
     }),
-    addBasketItem: builder.mutation<Basket, { product: Product | Item; quantity: number }>({
+    addBasketItem: builder.mutation<
+      Basket,
+      { product: Product | Item; quantity: number }
+    >({
       query: ({ product, quantity }) => {
         const productId = isBasketItem(product)
           ? product.productId
@@ -26,7 +30,10 @@ export const basketApi = createApi({
           method: "POST",
         };
       },
-      onQueryStarted: async ({ product, quantity }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (
+        { product, quantity },
+        { dispatch, queryFulfilled }
+      ) => {
         let isNewBasket = false;
         const patchResult = dispatch(
           basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
@@ -61,12 +68,18 @@ export const basketApi = createApi({
         }
       },
     }),
-    removeBasketItem: builder.mutation<void, { productId: number; quantity: number }>({
+    removeBasketItem: builder.mutation<
+      void,
+      { productId: number; quantity: number }
+    >({
       query: ({ productId, quantity }) => ({
         url: `basket?productId=${productId}&quantity=${quantity}`,
         method: "DELETE",
       }),
-      onQueryStarted: async ({ productId, quantity }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (
+        { productId, quantity },
+        { dispatch, queryFulfilled }
+      ) => {
         const patchResult = dispatch(
           basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
             const itemIndex = draft.items.findIndex(
@@ -89,6 +102,17 @@ export const basketApi = createApi({
         }
       },
     }),
+    clearBasket: builder.mutation<void, void>({
+      queryFn: () => ({ data: undefined }),
+      onQueryStarted: async (_, { dispatch }) => {
+        dispatch(
+          basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
+            draft.items = [];
+          })
+        );
+        Cookies.remove("basketId");
+      },
+    }),
   }),
 });
 
@@ -96,4 +120,5 @@ export const {
   useFetchBasketQuery,
   useAddBasketItemMutation,
   useRemoveBasketItemMutation,
+  useClearBasketMutation,
 } = basketApi;
