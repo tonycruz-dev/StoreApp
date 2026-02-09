@@ -1,37 +1,25 @@
 import { Grid, Typography } from "@mui/material";
 import ProductList from "./ProductList";
-import {
-  useLazyFetchFiltersQuery,
-  useLazyFetchProductsQuery,
-} from "./catalogApi";
+import { useFetchFiltersQuery, useFetchProductsQuery } from "./catalogApi";
 import Filters from "./Filters";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
 import AppPagination from "../../app/shared/components/AppPagination";
 import { setPageNumber } from "./catalogSlice";
-import { useEffect } from "react";
 
 export default function Catalog() {
   const productParams = useAppSelector((state) => state.catalog);
-  const [triggerFetchProducts, { data, isLoading: productsLoading }] =
-    useLazyFetchProductsQuery();
-  const [
-    triggerFetchFilters,
-    { data: filtersData, isLoading: filtersLoading },
-  ] = useLazyFetchFiltersQuery();
+  const { data, isLoading } = useFetchProductsQuery(productParams);
+  const { data: filtersData, isLoading: filtersLoading } =
+    useFetchFiltersQuery();
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    triggerFetchProducts(productParams);
-    triggerFetchFilters();
-  }, [triggerFetchFilters, triggerFetchProducts, productParams]);
-
-  if (productsLoading || filtersLoading || !data || !filtersData)
+  if (isLoading || !data || filtersLoading || !filtersData)
     return <div>Loading...</div>;
 
   return (
     <Grid container spacing={4}>
       <Grid size={3}>
-        <Filters data={filtersData} />
+        <Filters filtersData={filtersData} />
       </Grid>
       <Grid size={9}>
         {data.items && data.items.length > 0 ? (

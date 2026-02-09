@@ -3,8 +3,12 @@ Add-Migration BasketEntityAdded
 Add-Migration IdentityAdded
 Add-Migration BasketEntityUpdated
 Add-Migration OrderEntityUpdated
+Add-Migration SqlServerInitial
+Add-Migration PublicIdAdded
 
+SqlServerInitial
 
 
 // react
 npm run dev
+stripe listen --forward-to https://localhost:5001/api/Payments/webhook -e payment_intent.succeeded -e payment_intent.payment_failed

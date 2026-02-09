@@ -40,8 +40,12 @@ export default function CheckoutStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [createOrder] = useCreateOrderMutation();
   const { basket } = useBasket();
-  const { data: { name, ...restAddress } = {} as Address, isLoading } =
-    useFetchAddressQuery();
+
+  // Address API may return null when user has no saved address.
+  // Avoid destructuring from null/undefined.
+  const { data: addressData, isLoading } = useFetchAddressQuery();
+  const { name, ...restAddress } = addressData ?? ({} as Address);
+
   const [updateAddress] = useUpdateUserAddressMutation();
   const [saveAddressChecked, setSaveAddressChecked] = useState(false);
   const elements = useElements();
